@@ -37,7 +37,7 @@ cmd_opts = case cmd
 
 zone = ARGV.shift
 file_name = "spec/#{zone}.zone"
-zone = YoDns.from_file(file_name)
+zone = YoDns.from_file(file_name,"#{zone}.")
 
 case cmd
   when "list"
@@ -45,6 +45,7 @@ case cmd
   when "add"
     zone.add_record(ARGV[0], { :class => 'IN', :name => ARGV[1], :host => ARGV[2], :ttl => cmd_opts[:ttl] })  
     rr = zone.send(ARGV[0].to_sym)
+    puts zone.output
   else
     #
   end
