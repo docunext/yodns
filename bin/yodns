@@ -13,6 +13,7 @@ SUB_COMMANDS = %w(list add)
 global_opts = Trollop::options do
   banner "magic file deleting and copying utility"
   opt :dry_run, "Don't actually do anything", :short => "-n"
+  opt :verbose, "Increase verbosity", :short => "-v"
   stop_on SUB_COMMANDS
 end
 
@@ -56,11 +57,11 @@ rr.each do |za|
 end
 puts t
 
-if 1==2
-puts "Global options: #{global_opts.inspect}"
-puts "Subcommand: #{cmd.inspect}"
-puts "Subcommand options: #{cmd_opts.inspect}"
-puts "Remaining arguments: #{ARGV.inspect}"
+if global_opts.verbosity
+  puts "Global options: #{global_opts.inspect}"
+  puts "Subcommand: #{cmd.inspect}"
+  puts "Subcommand options: #{cmd_opts.inspect}"
+  puts "Remaining arguments: #{ARGV.inspect}"
 end
 
 exit
