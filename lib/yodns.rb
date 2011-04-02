@@ -14,6 +14,19 @@ class YoDns < Zonefile
     @zonefile.a.each {|ar| puts ar }
   end
 
+  def report(rr)
+    t = table ['zone','type','host','name']
+    rr.each do |za|
+      t << za.values
+    end
+    puts t
+  end
+
+  def self.load_zone(zone)
+    file_name = "spec/#{zone}.zone"
+    return YoDns.from_file(file_name,"#{zone}.")
+  end
+
 # File lib/zonefile/zonefile.rb, line 219
  def output
     out =<<-ENDH

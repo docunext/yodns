@@ -9,84 +9,55 @@ require 'lib/yodns'
 require 'trollop'
 require 'terminal-table/import'
 
-SUB_COMMANDS = %w(list add)
+SUB_COMMANDS = %w(zones list records add show export)
 global_opts = Trollop::options do
-  banner "magic file deleting and copying utility"
+  banner "Zonefile management tool"
   opt :dry_run, "Don't actually do anything", :short => "-n"
   opt :verbose, "Increase verbosity", :short => "-v"
   stop_on SUB_COMMANDS
 end
 
-# git remote set-url origin git@blahblah.com:barf.git
 # yodns add yodnsconf.com www www-c.evenserver.com.
 # yodns list --record=txt yodnsconf.com
 
-
 cmd = ARGV.shift # get the subcommand
-cmd_opts = case cmd
-  when "list"
-    Trollop::options do
-      opt :record, "Record type", :default => 'a', :short => '-t'
+case cmd
+  when "zones"
+    #
+  when "list" || "records"
+    cmd_opts = Trollop::options do
+      opt :type, "Record type", :default => 'a', :short => '-t'
     end
+    zone = YoDns.load_zone(ARGV.shift)
+    rr = zone.send(cmd_opts[:type].to_sym)
+    zone.report(rr)
+
   when "add"
-    Trollop::options do
+    cmd_opts = Trollop::options do
       opt :ttl, "Time-to-live", :default => 14400, :short => '-t'
+      opt :save, "Save"
     end
+    zone = YoDns.load_zone(ARGV.shift)
+    zone.add_record(ARGV[0], { :class => 'IN', :name => ARGV[1], :host => ARGV[2], :ttl => cmd_opts[:ttl] })  
+    rr = zone.send(ARGV[0].to_sym)
+    puts zone.output if global_opts.verbosity
+    zone.report(rr)
+
+  when "show"
+    zone = YoDns.load_zone(ARGV.shift)
+    puts zone.output
+
+  when "export"
+    #
   else
     Trollop::die "unknown subcommand #{cmd.inspect}"
   end
 
-zone = ARGV.shift
-file_name = "spec/#{zone}.zone"
-zone = YoDns.from_file(file_name,"#{zone}.")
 
-case cmd
-  when "list"
-    rr = zone.send(cmd_opts[:record].to_sym)
-  when "add"
-    zone.add_record(ARGV[0], { :class => 'IN', :name => ARGV[1], :host => ARGV[2], :ttl => cmd_opts[:ttl] })  
-    rr = zone.send(ARGV[0].to_sym)
-    puts zone.output
-  else
-    #
-  end
-
-t = table ['zone','type','host','name']
-rr.each do |za|
-  t << za.values
-end
-puts t
 
 if global_opts.verbosity
   puts "Global options: #{global_opts.inspect}"
   puts "Subcommand: #{cmd.inspect}"
   puts "Subcommand options: #{cmd_opts.inspect}"
   puts "Remaining arguments: #{ARGV.inspect}"
-end
-
-exit
-def help_text(exit_code = 0)
-  script_name = File.basename $0
-  puts """USAGE: 
-       #{script_name} zone <zone> add <hostname> [<ip=127.0.1.1>]
-       #{script_name} zones list
-"""
-  exit(exit_code)
-end
-
-if ARGV.size.zero? || ['-h', '--help', 'help'].include?(ARGV.first)
-  help_text
-else  
-  
-  case ARGV[1]
-  when 'list'
-    if [2,3].include?(ARGV.size)
-      begin
-        ARGV.shift
-        puts ARGV.inspect
-      rescue
-        #
-      end
-    end
-  end
 end
