@@ -1,17 +1,30 @@
 #!/usr/bin/env ruby
 
-begin
-  require 'rubygems'
-rescue LoadError
-  #
-end
+require 'rubygems'
 require 'lib/yodns'
 require 'trollop'
 require 'terminal-table/import'
 
 SUB_COMMANDS = %w(zones list records add show export)
 global_opts = Trollop::options do
-  banner "Zonefile management tool"
+  banner <<-EOS
+ 
+ YoDNSConf.com
+ =============
+
+Command Line Zonefile management tool
+
+Usage
+-----
+
+    yodns zones
+
+    yodns show <zone>
+    yodns list [--type] <zone>
+    yodns add <zone> <type> <name> <host> [ttl]
+
+where [options] are:
+EOS
   opt :dry_run, "Don't actually do anything", :short => "-n"
   opt :verbose, "Increase verbosity", :short => "-v"
   stop_on SUB_COMMANDS
@@ -21,31 +34,30 @@ end
 # yodns list --record=txt yodnsconf.com
 
 cmd = ARGV.shift # get the subcommand
+z = YoDns.new
+
 case cmd
   when "zones"
     #
-  when "list" || "records"
+  when "list"
     cmd_opts = Trollop::options do
       opt :type, "Record type", :default => 'a', :short => '-t'
     end
-    zone = YoDns.load_zone(ARGV.shift)
-    rr = zone.send(cmd_opts[:type].to_sym)
-    zone.report(rr)
+
+    z.list_zone_records ARGV.shift, cmd_opts[:type]
 
   when "add"
     cmd_opts = Trollop::options do
       opt :ttl, "Time-to-live", :default => 14400, :short => '-t'
       opt :save, "Save"
     end
-    zone = YoDns.load_zone(ARGV.shift)
-    zone.add_record(ARGV[0], { :class => 'IN', :name => ARGV[1], :host => ARGV[2], :ttl => cmd_opts[:ttl] })  
-    rr = zone.send(ARGV[0].to_sym)
-    puts zone.output if global_opts.verbosity
-    zone.report(rr)
+
+    ARGV << cmd_opts[:ttl]
+    zone = z.add_zone_record(ARGV.shift, ARGV.shift, ARGV )  
 
   when "show"
-    zone = YoDns.load_zone(ARGV.shift)
-    puts zone.output
+
+    puts z.load_zone(ARGV.shift).output
 
   when "export"
     #
@@ -54,8 +66,7 @@ case cmd
   end
 
 
-
-if global_opts.verbosity
+if global_opts[:verbose]
   puts "Global options: #{global_opts.inspect}"
   puts "Subcommand: #{cmd.inspect}"
   puts "Subcommand options: #{cmd_opts.inspect}"

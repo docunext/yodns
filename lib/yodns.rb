@@ -1,30 +1,45 @@
 require 'zonefile'
 
-class YoDns < Zonefile
+class YoDns
 
-  def self.from_file(file_name, origin = nil)
-    if File.exists?(file_name)
-      YoDns.new(File.read(file_name), file_name.split('/').last, origin)
-    else
-      #raise ZonefileNotFound.new(zone)
-    end
-  end
+  attr_accessor :zone
+  attr_accessor :record_type
 
-  def list_records
-    @zonefile.a.each {|ar| puts ar }
-  end
-
-  def report(rr)
-    t = table ['zone','type','host','name']
+  def record_report
+    rect = @record_type.to_sym
+    rr = @zone.send(rect) 
+    th = rr.first.keys
+    th.delete(:class)
+    th.insert(0,th.pop) << 'record_type'
+    t = table th
     rr.each do |za|
-      t << za.values
+      za.delete(:class)
+      tr = za.values
+      tr = tr.insert(0,tr.pop) << @record_type
+      t << tr
     end
     puts t
   end
 
-  def self.load_zone(zone)
+  def load_zone(zone, origin=nil)
     file_name = "spec/#{zone}.zone"
-    return YoDns.from_file(file_name,"#{zone}.")
+    if File.exists?(file_name)
+      @zone = Zonefile.new(File.read(file_name), file_name.split('/').last, origin)
+    else
+      #raise ZonefileNotFound.new(zone)
+    end
+  end
+  def list_zone_records(zone, report_type)
+    self.load_zone(zone)
+    @record_type = report_type 
+    self.record_report
+  end
+  def add_zone_record(zone, type, params = []) 
+    self.load_zone(zone)
+    @zone.add_record(type, { :class => 'IN', :name => params[0], :host => params[1], :ttl => params[2] })
+    puts "Added #{params[0]} pointing to #{params[1]} "
+    @record_type = type
+    self.record_report
   end
 
 # File lib/zonefile/zonefile.rb, line 219
