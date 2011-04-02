@@ -30,10 +30,7 @@ EOS
   stop_on SUB_COMMANDS
 end
 
-# yodns add yodnsconf.com www www-c.evenserver.com.
-# yodns list --record=txt yodnsconf.com
-
-cmd = ARGV.shift # get the subcommand
+cmd = ARGV.shift
 z = YoDns.new
 
 case cmd
@@ -53,7 +50,7 @@ case cmd
     end
 
     ARGV << cmd_opts[:ttl]
-    zone = z.add_zone_record(ARGV.shift, ARGV.shift, ARGV )  
+    zone = z.add_zone_record ARGV.shift, ARGV.shift, ARGV  
 
   when "show"
 
