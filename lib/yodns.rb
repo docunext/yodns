@@ -2,8 +2,7 @@ require 'zonefile'
 
 class YoDns
 
-  attr_accessor :zone
-  attr_accessor :record_type
+  attr_accessor :zone, :record_type, :filename
 
   def record_report
     rect = @record_type.to_sym
@@ -22,9 +21,9 @@ class YoDns
   end
 
   def load_zone(zone, origin=nil)
-    file_name = "spec/#{zone}.zone"
-    if File.exists?(file_name)
-      @zone = Zonefile.new(File.read(file_name), file_name.split('/').last, origin)
+    @filename = "zones/#{zone}.zone"
+    if File.exists?(@filename)
+      @zone = Zonefile.new(File.read(@filename), @filename.split('/').last, origin)
     else
       #raise ZonefileNotFound.new(zone)
     end
@@ -36,12 +35,24 @@ class YoDns
   end
   def add_zone_record(zone, type, params = []) 
     self.load_zone(zone)
-    @zone.add_record(type, { :class => 'IN', :name => params[0], :host => params[1], :ttl => params[2] })
+    #puts self.output
+    @zone.add_record("#{type}", { :class => 'IN', :name => params[0], :host => params[1], :ttl => params[2] })
     puts "Added #{params[0]} pointing to #{params[1]} "
     @record_type = type
     self.record_report
+    self.save_zone 
   end
+  def export_zone(zone)
+    self.load_zone(zone)
+    return @zone
+  end
+  def save_zone
+    puts @zone.output
+    File.open(@filename, 'w') {|f| f.write(@zone.output) }
+  end
+end
 
+class NotZonefile
 # File lib/zonefile/zonefile.rb, line 219
  def output
     out =<<-ENDH

@@ -51,13 +51,16 @@ case cmd
 
     ARGV << cmd_opts[:ttl]
     zone = z.add_zone_record ARGV.shift, ARGV.shift, ARGV  
+#    puts zone.output
+#    File.open(zone.filename, 'w') {|f| f.write(zone.output) }
 
   when "show"
-
-    puts z.load_zone(ARGV.shift).output
+    zone = z.load_zone(ARGV.shift)
+    puts zone.output
+    #puts z.load_zone(ARGV.shift).output
 
   when "export"
-    #
+    puts z.load_zone(ARGV.shift).output
   else
     Trollop::die "unknown subcommand #{cmd.inspect}"
   end
