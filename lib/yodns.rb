@@ -21,7 +21,7 @@ class YoDns
   end
 
   def load_zone(zone, origin=nil)
-    @filename = "zones/#{zone}.zone"
+    @filename = "../zones/#{zone}.zone"
     if File.exists?(@filename)
       @zone = Zonefile.new(File.read(@filename), @filename.split('/').last, origin)
     else

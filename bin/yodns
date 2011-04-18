@@ -5,7 +5,7 @@ require 'lib/yodns'
 require 'trollop'
 require 'terminal-table/import'
 
-SUB_COMMANDS = %w(zones list records add show export)
+SUB_COMMANDS = %w(zones list records add rm show export)
 global_opts = Trollop::options do
   banner <<-EOS
  
@@ -49,10 +49,21 @@ case cmd
       opt :save, "Save"
     end
 
+  when "add"
+    cmd_opts = Trollop::options do
+      opt :ttl, "Time-to-live", :default => 14400, :short => '-t'
+      opt :save, "Save"
+    end
+
     ARGV << cmd_opts[:ttl]
     zone = z.add_zone_record ARGV.shift, ARGV.shift, ARGV  
 #    puts zone.output
 #    File.open(zone.filename, 'w') {|f| f.write(zone.output) }
+
+
+  when "rm"
+    zone = z.load_zone(ARGV.shift)
+    puts "Removing #{ARGV.shift}"
 
   when "show"
     zone = z.load_zone(ARGV.shift)
