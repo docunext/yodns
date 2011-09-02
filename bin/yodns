@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'lib/yodns'
+require './lib/yodns'
 require 'trollop'
 require 'terminal-table/import'
 

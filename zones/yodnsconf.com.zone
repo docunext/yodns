@@ -1,0 +1,19 @@
+$ORIGIN yodnsconf.com.
+$TTL 12h
+yodnsconf.com.  IN  SOA  ns1.evenserver.com. support.savonix.com. (
+              2010092502
+              28800
+              7200
+              604800
+              14400
+              )
+
+ 86400 IN A 207.192.71.184
+ 86400 IN A 209.20.83.25
+ 604800 IN MX 10 34f9c6ea.evenserver.com.
+ 604800 IN NS ns1.evenserver.com.
+ 604800 IN NS ns2.evenserver.com.
+ 604800 IN NS ns3.evenserver.com.
+ 604800 IN NS ns4.evenserver.com.
+ 86400 IN TXT "v=spf1 -all"
+www 28800 IN CNAME www-c.evenserver.com.
