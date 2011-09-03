@@ -1,8 +1,18 @@
 require 'zonefile'
+require 'yaml'
+
 
 class YoDns
 
   attr_accessor :zone, :record_type, :filename
+  attr_reader :zone_path
+
+  def initialize
+    begin
+      conf = YAML.load_file File.expand_path("~/.yodnsconf.yml")
+      @zone_path = conf['zone_path']
+    end
+  end
 
   def record_report
     rect = @record_type.to_sym
@@ -21,11 +31,13 @@ class YoDns
   end
 
   def load_zone(zone, origin=nil)
-    @filename = "../zones/#{zone}.zone"
+    @filename = "#{@zone_path}/#{zone}.zone"
     if File.exists?(@filename)
       @zone = Zonefile.new(File.read(@filename), @filename.split('/').last, origin)
     else
-      #raise ZonefileNotFound.new(zone)
+      puts @zone_path
+      puts @filename
+#      raise ZonefileNotFound.new(zone)
     end
   end
   def list_zone_records(zone, report_type)
