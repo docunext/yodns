@@ -42,7 +42,7 @@ case cmd
 
     z.list_zone_records ARGV.shift, cmd_opts[:type]
 
-  when "add"
+  when "nadd"
     cmd_opts = Trollop::options do
       opt :ttl, "Time-to-live", :default => 14400, :short => '-t'
       opt :save, "Save"
@@ -51,13 +51,11 @@ case cmd
   when "add"
     cmd_opts = Trollop::options do
       opt :ttl, "Time-to-live", :default => 14400, :short => '-t'
-      opt :save, "Save"
+      opt :save, "Save", :default => nil, :short => '-s'
     end
 
-    ARGV << cmd_opts[:ttl]
-    zone = z.add_zone_record ARGV.shift, ARGV.shift, ARGV  
-#    puts zone.output
-#    File.open(zone.filename, 'w') {|f| f.write(zone.output) }
+    ARGV << cmd_opts[:ttl] unless ARGV[4]
+    zone = z.add_zone_record ARGV.shift, ARGV.shift, cmd_opts[:save], ARGV
 
 
   when "rm"
@@ -66,7 +64,7 @@ case cmd
 
   when "show"
     zone = z.load_zone(ARGV.shift)
-    puts zone.inspect
+    puts zone.output
     #puts z.load_zone(ARGV.shift).output
 
   when "export"

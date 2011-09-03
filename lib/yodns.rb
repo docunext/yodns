@@ -30,10 +30,20 @@ class YoDns
     puts t
   end
 
-  def load_zone(zone, origin=nil)
+  def load_zone(zone, origin=zone)
     @filename = "#{@zone_path}/#{zone}.zone"
     if File.exists?(@filename)
       @zone = Zonefile.new(File.read(@filename), @filename.split('/').last, origin)
+    else
+      puts @zone_path
+      puts @filename
+#      raise ZonefileNotFound.new(zone)
+    end
+  end
+  def reload
+    puts "Reloading #{@filename}"
+    if File.exists?(@filename)
+      @zone = Zonefile.new(File.read(@filename), @filename.split('/').last)
     else
       puts @zone_path
       puts @filename
@@ -45,14 +55,21 @@ class YoDns
     @record_type = report_type 
     self.record_report
   end
-  def add_zone_record(zone, type, params = []) 
+  def add_zone_record(zone, type, save=false, params = []) 
     self.load_zone(zone)
     #puts self.output
-    @zone.add_record("#{type}", { :class => 'IN', :name => params[0], :host => params[1], :ttl => params[2] })
+    puts params.inspect
+    @zone.send("#{type}") <<  { :class => 'IN', :name => params[0], :host => params[1], :ttl => params[2] }
+    #@zone.a << { :class => 'IN', :name => 'www', :host => '192.168.100.1', :ttl => "3600" } 
     puts "Added #{params[0]} pointing to #{params[1]} "
     @record_type = type
+    puts @zone.output
+    if save
+      @zone.new_serial
+      self.save_zone
+    end
+    self.reload
     self.record_report
-    self.save_zone 
   end
   def export_zone(zone)
     self.load_zone(zone)

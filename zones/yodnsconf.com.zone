@@ -1,19 +1,26 @@
-$ORIGIN yodnsconf.com.
+;
+;  Database file yodnsconf.com.zone for yodnsconf.com zone.
+;	Zone version: 2011090212
+;
 $TTL 12h
-yodnsconf.com.  IN  SOA  ns1.evenserver.com. support.savonix.com. (
-              2010092502
-              28800
-              7200
-              604800
-              14400
-              )
+yodnsconf.com.		12h IN  SOA  ns1.evenserver.com. support.savonix.com. (
+				2011090212	; serial number
+				28800	; refresh
+				7200	; retry
+				604800	; expire
+				14400	; minimum TTL
+				)
+; Zone NS Records
+	604800	IN	NS	ns1.evenserver.com.
+	604800	IN	NS	ns2.evenserver.com.
+	604800	IN	NS	ns3.evenserver.com.
+	604800	IN	NS	ns4.evenserver.com.
 
- 86400 IN A 207.192.71.184
- 86400 IN A 209.20.83.25
- 604800 IN MX 10 34f9c6ea.evenserver.com.
- 604800 IN NS ns1.evenserver.com.
- 604800 IN NS ns2.evenserver.com.
- 604800 IN NS ns3.evenserver.com.
- 604800 IN NS ns4.evenserver.com.
- 86400 IN TXT "v=spf1 -all"
-www 28800 IN CNAME www-c.evenserver.com.
+; Zone MX Records
+	604800	IN	MX	10 34f9c6ea.evenserver.com.
+	86400	IN	A	207.192.71.184
+	86400	IN	A	209.20.83.25
+www	14400	IN	CNAME	www-c.evenserver.com.
+www-v	2400	IN	CNAME	www-c.evenserver.com.
+www-v	2400	IN	CNAME	www-c.evenserver.com.
+	86400	IN	TXT	"v=spf1 -all"
