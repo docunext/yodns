@@ -1,10 +1,10 @@
 ;
 ;  Database file yodnsconf.com.zone for yodnsconf.com zone.
-;	Zone version: 2011090212
+;	Zone version: 2011090300
 ;
 $TTL 12h
 yodnsconf.com.		12h IN  SOA  ns1.evenserver.com. support.savonix.com. (
-				2011090212	; serial number
+				2011090300	; serial number
 				28800	; refresh
 				7200	; retry
 				604800	; expire
@@ -23,4 +23,5 @@ yodnsconf.com.		12h IN  SOA  ns1.evenserver.com. support.savonix.com. (
 www	14400	IN	CNAME	www-c.evenserver.com.
 www-v	2400	IN	CNAME	www-c.evenserver.com.
 www-v	2400	IN	CNAME	www-c.evenserver.com.
+thushani	28800	IN	CNAME	www-c.evenserver.com.
 	86400	IN	TXT	"v=spf1 -all"

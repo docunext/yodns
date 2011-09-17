@@ -3,6 +3,8 @@
 require './lib/yodns'
 require 'trollop'
 require 'terminal-table/import'
+require 'fileutils'
+require 'rake'
 
 SUB_COMMANDS = %w(zones list records add rm show export)
 global_opts = Trollop::options do
@@ -34,7 +36,8 @@ z = YoDns.new
 
 case cmd
   when "zones"
-    #
+    puts z.zones_table
+
   when "list"
     cmd_opts = Trollop::options do
       opt :type, "Record type", :default => 'a', :short => '-t'

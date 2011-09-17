@@ -1,7 +1,6 @@
 require 'zonefile'
 require 'yaml'
 
-
 class YoDns
 
   attr_accessor :zone, :record_type, :filename
@@ -14,6 +13,19 @@ class YoDns
     end
   end
 
+  def zones_table
+    zonefiles = FileList.new("#{self.zone_path}/*").map{|x| x.split('/').last.gsub('.zone','')}
+    rows = (zonefiles.count / 3).to_i + 1
+    t = table
+    rows.times do |i|
+    #zonefiles.each do |zf|
+      t1 = zonefiles[i]
+      t2 = zonefiles[i + rows] ||= ''
+      t3 = zonefiles[i + (rows * 2)] ||= ''
+      t << [t1, t2, t3]
+    end
+    t
+  end
   def record_report
     rect = @record_type.to_sym
     rr = @zone.send(rect) 

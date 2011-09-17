@@ -1,9 +1,14 @@
 YoDNS is a command-line sub-component of YoDNSConf, a web-based dns management system built on Ruby on Rails.
 
-
-http://www.yodnsconf.com/
+* <http://www.yodnsconf.com/>
 
 
 ## Plans
 
 I might merge yodns into yodnsconf at some point, but for now I will keep them separate. This gem is meant to be very tiny.
+
+## Example Usage
+
+<pre>
+bin/yodns list yodnsconf.com
+</pre>
